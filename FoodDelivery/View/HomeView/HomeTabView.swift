@@ -85,25 +85,15 @@ struct HomeTabView: View {
                     }
 
 
-                    HStack{ // Enhanced Search Bar
-                        Image("search")
-                            .resizable()
-                            .frame(width: 30, height:30)
 
-                        TextField("Search Store", text: $searchText)
+                        SearchTextField(searchText: .constant(""), placeholder: "Search Store")
+                                            .padding()
                             
-                    }.padding(14)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(LinearGradient(gradient: Gradient(colors: [.white, Color.gray.opacity(0.2)]), startPoint: .leading, endPoint: .trailing))
-                        )
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.3), lineWidth: 1))
-                        .shadow(color: .gray.opacity(0.1), radius: 5)
-                        .padding()
+                   
                 }
 
                 // Scrollable Images Section
-                ScrollView(.horizontal, showsIndicators: false) { // Horizontal scroll view
+                ScrollView(.horizontal   , showsIndicators: false) { // Horizontal scroll view
                     HStack {
                         Image("images")
                             .resizable()
@@ -120,17 +110,26 @@ struct HomeTabView: View {
                             .scaledToFit()
                             .frame(width: 370, height: 140)
                     }
-                    .padding(.horizontal, 20)
-                }
-                .padding(.bottom, 20) // Padding below the images section
+                    .padding(.horizontal,2)
+                }// Padding below the images section
 
                 // Fresh Vegetables Section
                 VStack(alignment: .leading) {
-                    Text("Fresh Vegetables")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .padding(.bottom, 8)
-                        .padding(.leading)
+                    
+                    HStack{
+                        Text("Fresh Vegetables")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.leading)
+                        Spacer()
+                        
+                        Button(action: {}) {
+                            Text("See all")
+                                .padding()
+                                .foregroundColor(.primaryApp)
+                                .font(.customfont(.semibold, fontSize: 14))
+                                .padding(.leading)
+                        }}
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
@@ -141,16 +140,28 @@ struct HomeTabView: View {
                         .padding(.horizontal, 20)
                     }
                 }
-                .padding(.bottom, 20)
+
 
                 // Best Selling Section
                 VStack(alignment: .leading) {
-                    Text("Best Selling")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.orange)
-                        .padding(.bottom, 8)
-                        .padding(.leading)
+                    
+                    HStack{
+                        Text("Best Selling")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.orange)
+                            .padding(.bottom, 8)
+                            .padding(.leading)
+                        Spacer()
+                        
+                        Button(action: {}) {
+                            Text("See all")
+                                .padding()
+                                .foregroundColor(.primaryApp)
+                                .font(.customfont(.semibold, fontSize: 14))
+                                .padding(.leading)
+                        }
+                    }
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
@@ -161,24 +172,34 @@ struct HomeTabView: View {
                         .padding(.horizontal, 20)
                     }
                 }
-                .padding(.bottom, 20)
 
+                
                 // Groceries Section
                 VStack(alignment: .leading) {
-                    Text("Groceries")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.blue)
-                        .padding(.bottom, 8)
-                        .padding(.leading)
+                    HStack{
+                        Text("Groceries")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.blue)
+                            .padding(.bottom, 8)
+                            .padding(.leading)
+                        Spacer()
+                        
+                        Button(action: {}) {
+                            Text("See all")
+                                .padding()
+                                .foregroundColor(.primaryApp)
+                                .font(.customfont(.semibold, fontSize: 14))
+                                .padding(.leading)
+                        }}
 
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
+                        HStack(spacing: 20) {
                             ForEach(products, id: \.id) { product in
                                 ProductCardView(name: product.name, price: product.price, image: product.image)
                             }
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 10)
                     }
                 }
                 .padding(.bottom, 20)
@@ -191,14 +212,14 @@ struct HomeTabView: View {
 }
 
 // Product Model
-struct Product: Identifiable {
+struct Product: Identifiable, Equatable {
     var id = UUID()
     var name: String
     var price: String
     var image: String
-    var quantity: Int = 1
-    
+    var quantity: Int = 1  // Quantity added
 }
+
 
 // Product Card View
 

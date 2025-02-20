@@ -1,14 +1,8 @@
-//
-//   CartTabView.swift
-//  FoodDelivery
-//
-//  Created by student on 08/02/25.
-//
-
 import SwiftUI
 
 struct CartTabView: View {
     @StateObject var mainVM = MainViewModel.shared
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     
     var body: some View {
         VStack {
@@ -29,13 +23,37 @@ struct CartTabView: View {
                         Text(product.price)
                             .font(.subheadline)
                     }
+                    
                     Spacer()
+                    
+                    HStack {
+                        Button(action: {
+                            mainVM.removeFromCart(product: product)
+                        }) {
+                            Image(systemName: "minus.circle.fill")
+                                .foregroundColor(.red)
+                        }
+                        
+                        Text("\(product.quantity)")
+                            .font(.headline)
+                            .padding(.horizontal, 8)
+                        
+                        Button(action: {
+                            mainVM.addToCart(product: product)
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(.green)
+                        }
+                    }
+                    .padding(.trailing, 10)
                 }
             }
         }
     }
 }
 
-#Preview {
-    CartTabView()
+struct CartTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        CartTabView()
+    }
 }

@@ -67,10 +67,27 @@ class MainViewModel: ObservableObject {
             self.showError(message: error?.localizedDescription ?? "Login failed")
         }
     }
-    
+   
     func addToCart(product: Product) {
-           cart.append(product)
-       }
+        if let index = cart.firstIndex(where: { $0.id == product.id }) {
+            cart[index].quantity += 1
+        } else {
+            var newProduct = product
+            newProduct.quantity = 1
+            cart.append(newProduct)
+        }
+    }
+    
+    func removeFromCart(product: Product) {
+        if let index = cart.firstIndex(where: { $0.id == product.id }) {
+            if cart[index].quantity > 1 {
+                cart[index].quantity -= 1
+            } else {
+                cart.remove(at: index)
+            }
+        }
+    }
+
     func serviceCallSignUp() {
         guard !txtUsername.isEmpty else {
             showError(message: "Please enter a valid username")
