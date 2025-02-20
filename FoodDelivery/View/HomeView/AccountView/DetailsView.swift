@@ -36,19 +36,7 @@ struct UserDetailView: View {
                 }
                 .padding(.horizontal)
                 
-                HStack {
-                    Text("Age")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    Spacer()
-                    TextField("Enter Age", text: $userAge)
-                        .padding(12)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .keyboardType(.numberPad)
-                        .disabled(!isEditing) // Disable if not editing
-                }
-                .padding(.horizontal)
+                
                 
                 HStack {
                     Text("Email")
@@ -62,26 +50,7 @@ struct UserDetailView: View {
                 .padding(.horizontal)
                 
                 // Password Field
-                HStack {
-                    Text("Password")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    Spacer()
-                    if mainViewModel.isShowPassword {
-                        TextField("Enter Password", text: $mainViewModel.txtPassword)
-                            .padding(12)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .disabled(!isEditing) // Disable if not editing
-                    } else {
-                        SecureField("Enter Password", text: $mainViewModel.txtPassword)
-                            .padding(12)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .disabled(!isEditing) // Disable if not editing
-                    }
-                }
-                .padding(.horizontal)
+                
                 
                 // Toggle Password Visibility
                 HStack {

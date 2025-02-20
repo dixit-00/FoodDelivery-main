@@ -3,42 +3,42 @@ import SwiftUI
 struct LoginView: View {
     
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
-    @StateObject var loginVM = MainViewModel.shared;
-//  @ObservedObject var loginVm = MainViewModel.shared;
+    @StateObject var loginVM = MainViewModel.shared
+    @State private var isLoginSuccess = false
     
     var body: some View {
-        ZStack{
+        ZStack {
             Image("bottom_bg")
                 .resizable()
                 .scaledToFill()
                 .frame(width: .screenWidth, height: .screenHeight)
             
-            VStack{
+            VStack {
                 Image("color_logo")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 50, height: 50)
                     .padding(.top, 100)
-              
+                
                 Spacer()
                 
                 Text("Login")
                     .font(.customfont(.semibold, fontSize: 26))
                     .foregroundColor(.primaryText)
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 5)
                 
                 Text("Enter your email and password")
                     .font(.customfont(.semibold, fontSize: 16))
                     .foregroundColor(.secondaryText)
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 30)
 
-                LineTextField( title: "Email", placholder: "Enter your email address", txt: $loginVM.txtEmail, keyboardType: .emailAddress)
+                LineTextField(title: "Email", placholder: "Enter your email address", txt: $loginVM.txtEmail, keyboardType: .emailAddress)
                     .padding(.bottom, 30)
                                 
-                LineSecureField( title: "Password", placholder: "Enter your password", txt: $loginVM.txtPassword, isShowPassword: $loginVM.isShowPassword)
-                    .padding(.bottom,10)
+                LineSecureField(title: "Password", placholder: "Enter your password", txt: $loginVM.txtPassword, isShowPassword: $loginVM.isShowPassword)
+                    .padding(.bottom, 10)
                 
                 Button {
                     
@@ -47,16 +47,26 @@ struct LoginView: View {
                         .font(.customfont(.medium, fontSize: 14))
                         .foregroundColor(.primaryText)
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.bottom, 25)
                 
-                
-                    RoundButton(title: "Log In"){
-                        loginVM.serviceCallLogin()
+                NavigationLink(destination: SelectLocationView(), isActive: $isLoginSuccess) {
+                    EmptyView()
+                }
+
+                RoundButton(title: "Log In") {
+                    loginVM.serviceCallLogin()
+                    
+                    // Navigate to SelectLocationView if login is successful
+                    if loginVM.isUserLogin {
+                        isLoginSuccess = true
                     }
                 
+
+                }
                 .padding(.bottom, 10)
-                HStack{
+
+                HStack {
                     Text("Don't have an account?")
                         .font(.customfont(.semibold, fontSize: 16))
                         .foregroundColor(.primaryText)
@@ -68,18 +78,16 @@ struct LoginView: View {
                             .font(.customfont(.semibold, fontSize: 16))
                             .foregroundColor(.primaryApp)
                     }
-
                 }
             }
             .padding(.bottom, 190)
             .padding(.horizontal, 20)
             .padding(.bottom, .bottomInsets)
 
-            
-            VStack{
-                HStack{
-                    NavigationLink{
-                        SingInView().environmentObject(loginVM)
+            VStack {
+                HStack {
+                    NavigationLink {
+//                        SignInView()
                     } label: {
                         Image("back")
                             .resizable()
@@ -93,9 +101,8 @@ struct LoginView: View {
             .padding(.top, 60)
             .padding(.horizontal, 20)
         }
-        
         .alert(isPresented: $loginVM.showError) {
-            Alert(title: Text(Globs.AppName), message: Text( loginVM.errorMessage ), dismissButton: .default(Text("Ok")))
+            Alert(title: Text(Globs.AppName), message: Text(loginVM.errorMessage), dismissButton: .default(Text("Ok")))
         }
         .navigationTitle("")
         .navigationBarHidden(true)
@@ -105,7 +112,7 @@ struct LoginView: View {
 }
 
 #Preview {
-    NavigationView{
+    NavigationView {
         LoginView()
     }
 }

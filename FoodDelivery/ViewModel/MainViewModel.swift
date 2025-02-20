@@ -1,142 +1,128 @@
-
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    static var shared: MainViewModel = MainViewModel()
+    static let shared = MainViewModel()
     
-    @Published var txtUsername: String = ""
-    @Published var txtEmail: String = ""
-    @Published var txtPassword: String = ""
-    @Published var isShowPassword: Bool = false
-    @Published var userImage: String = "u1"
+    @Published var txtUsername = ""
+    @Published var txtEmail = ""
+    @Published var txtPassword = ""
+    @Published var isShowPassword = false
+    @Published var userImage = "u1"
     @Published var favourites: [Product] = []
+    @Published var cart: [Product] = []
     
     @Published var showError = false
     @Published var errorMessage = ""
-    @Published var isUserLogin: Bool = false
-    @Published var userObj: UserModel = UserModel(dict: [:])
+    @Published var isUserLogin = false
+    @Published var userObj = UserModel(dict: [:])
     
-       @Published var selectedZone: String = "Select Zone"
-       @Published var selectedArea: String = ""
+    @Published var selectedZone = "Select Zone"
+    @Published var selectedArea = ""
     
-    private let profileImages = ["u1", "u2.png", "u3", "u4", "u5"]
-
+    private let profileImages = ["u1", "u2", "u3", "u4", "u5"]
+    
     init() {
-        
-        
-        if( Utils.UDValueBool(key: Globs.userLogin) ) {
-            // User Login
-            self.setUserData(uDict: Utils.UDValue(key: Globs.userPayload) as? NSDictionary ?? [:] )
-        }else{
-            // User Not Login
+        if Utils.UDValueBool(key: Globs.userLogin) {
+            setUserData(uDict: Utils.UDValue(key: Globs.userPayload) as? NSDictionary ?? [:])
         }
-        
-   
     }
     
     func setRandomProfileImage() {
-            self.userImage = profileImages.randomElement() ?? "u1" // Default to "u1" if empty
-        }
-    func logout(){
+        userImage = profileImages.randomElement() ?? "u1"
+    }
+    
+    func logout() {
         Utils.UDSET(data: false, key: Globs.userLogin)
         isUserLogin = false
     }
-
     
-    //MARK: ServiceCall
-    func serviceCallLogin(){
-        
-        
-        if(!txtEmail.isValidEmail) {
-            self.errorMessage = "please enter valid email address"
-            self.showError = true
-            return
+    func addToFavourites(product: Product) {
+        if !favourites.contains(where: { $0.id == product.id }) {
+            favourites.append(product)
         }
-        
-        if(txtPassword.isEmpty) {
-            self.errorMessage = "please enter valid password"
-            self.showError = true
-            return
-        }
-        
-        ServiceCall.post(parameter: ["email": txtEmail, "password": txtPassword, "dervice_token":"" ], path: Globs.SV_LOGIN) { responseObj in
-            if let response = responseObj as? NSDictionary {
-                if response.value(forKey: KKey.status) as? String ?? "" == "1" {
-                    
-                    
-                    
-                    self.setUserData(uDict: response.value(forKey: KKey.payload) as? NSDictionary ?? [:])
-                    
-                    
-                }else{
-                    self.errorMessage = response.value(forKey: KKey.message) as? String ?? "Fail"
-                    self.showError = true
-                }
-            }
-        } failure: { error in
-            self.errorMessage = error?.localizedDescription ?? "Fail"
-            self.showError = true
-        }
-
     }
     
-    func serviceCallSignUp(){
-        
-        if(txtUsername.isEmpty) {
-            self.errorMessage = "please enter valid username"
-            self.showError = true
+    func removeFromFavourites(product: Product) {
+        favourites.removeAll { $0.id == product.id }
+    }
+    
+    func serviceCallLogin() {
+        guard txtEmail.isValidEmail else {
+            showError(message: "Please enter a valid email address")
             return
         }
+        
+        guard !txtPassword.isEmpty else {
+            showError(message: "Please enter a valid password")
+            return
+        }
+        
+        ServiceCall.post(parameter: ["email": txtEmail, "password": txtPassword, "device_token": ""], path: Globs.SV_LOGIN) { responseObj in
+            if let response = responseObj as? NSDictionary, response[KKey.status] as? String == "1" {
+                self.setUserData(uDict: response[KKey.payload] as? NSDictionary ?? [:])
+            } else {
+                self.showError(message: responseObj?[KKey.message] as? String ?? "Login failed")
+            }
+        } failure: { error in
+            self.showError(message: error?.localizedDescription ?? "Login failed")
+        }
+    }
+    
+    func addToCart(product: Product) {
+           cart.append(product)
+       }
+    func serviceCallSignUp() {
+        guard !txtUsername.isEmpty else {
+            showError(message: "Please enter a valid username")
+            return
+        }
+        
+        guard txtEmail.isValidEmail else {
+            showError(message: "Please enter a valid email address")
+            return
+        }
+        
+        guard !txtPassword.isEmpty else {
+            showError(message: "Please enter a valid password")
+            return
+        }
+        
         setRandomProfileImage()
         
-        if(!txtEmail.isValidEmail) {
-            self.errorMessage = "please enter valid email address"
-            self.showError = true
-            return
-        }
-        
-        if(txtPassword.isEmpty) {
-            self.errorMessage = "please enter valid password"
-            self.showError = true
-            return
-        }
-        
-        ServiceCall.post(parameter: [ "username": txtUsername , "email": txtEmail, "password": txtPassword, "dervice_token":"" ], path: Globs.SV_SIGN_UP) { responseObj in
-            if let response = responseObj as? NSDictionary {
-                if response.value(forKey: KKey.status) as? String ?? "" == "1" {
-                    self.setUserData(uDict: response.value(forKey: KKey.payload) as? NSDictionary ?? [:])
-                }else{
-                    self.errorMessage = response.value(forKey: KKey.message) as? String ?? "Fail"
-                    self.showError = true
-                }
+        ServiceCall.post(parameter: ["username": txtUsername, "email": txtEmail, "password": txtPassword, "device_token": ""], path: Globs.SV_SIGN_UP) { responseObj in
+            if let response = responseObj as? NSDictionary, response[KKey.status] as? String == "1" {
+                self.setUserData(uDict: response[KKey.payload] as? NSDictionary ?? [:])
+            } else {
+                self.showError(message: responseObj?[KKey.message] as? String ?? "Signup failed")
             }
         } failure: { error in
-            self.errorMessage = error?.localizedDescription ?? "Fail"
-            self.showError = true
+            self.showError(message: error?.localizedDescription ?? "Signup failed")
         }
-
     }
-    func addToFavourites(product: Product) {
-           favourites.append(product)
-       }
-
-       func removeFromFavourites(product: Product) {
-           favourites.removeAll { $0.id == product.id }
-       }
+    
+    func toggleFavourite(product: Product) {
+        if let index = favourites.firstIndex(where: { $0.id == product.id }) {
+                favourites.remove(at: index) // Remove if already liked
+            } else {
+                favourites.append(product) // Add if not liked
+            }
+        }
     
     func setUserData(uDict: NSDictionary) {
         Utils.UDSET(data: uDict, key: Globs.userPayload)
         Utils.UDSET(data: true, key: Globs.userLogin)
-        self.userObj = UserModel(dict: uDict)
-        self.isUserLogin = true
-        
-        self.txtUsername = uDict["username"] as? String ?? ""
-        self.txtEmail = uDict["email"] as? String ?? ""  // Make sure email is set
-        self.txtPassword = ""
-        self.isShowPassword = false
-        self.setRandomProfileImage()
+        userObj = UserModel(dict: uDict)
+        isUserLogin = true
+        txtUsername = uDict["username"] as? String ?? ""
+        txtEmail = uDict["email"] as? String ?? ""
+        txtPassword = ""
+        isShowPassword = false
+        setRandomProfileImage()
     }
     
-   
-
+    private func showError(message: String) {
+        errorMessage = message
+        showError = true
+    }
 }
+

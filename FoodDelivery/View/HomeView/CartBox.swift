@@ -4,48 +4,50 @@ struct ProductCardView: View {
     var name: String
     var price: String
     var image: String
-    @State private var isLiked: Bool = false  // State for managing like button state
 
+    @StateObject var mainVM = MainViewModel.shared
+    
+    var isLiked: Bool {
+        mainVM.favourites.contains { $0.name == name && $0.price == price && $0.image == image }
+    }
+    
     var body: some View {
         VStack(spacing: 12) {
-            // Product Image with rounded corners and shadow
             Image(image)
                 .resizable()
                 .scaledToFit()
                 .frame(height: 140)
                 .clipShape(RoundedRectangle(cornerRadius: 15))
                 .shadow(radius: 10)
-
-            // Product Name with a more stylish font
+            
             Text(name)
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.primary)
                 .lineLimit(1)
                 .padding(.horizontal)
-
-            // Price and Add Button with Like Button
+            
             HStack {
                 Text(price)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
-
+                
                 Spacer()
-
-                // Like Button
+                
                 Button(action: {
-                    isLiked.toggle() // Toggle the like status
+                    if isLiked {
+                        mainVM.removeFromFavourites(product: Product(name: name, price: price, image: image))
+                    } else {
+                        mainVM.addToFavourites(product: Product(name: name, price: price, image: image))
+                    }
                 }) {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
                         .font(.title2)
                         .foregroundColor(isLiked ? .red : .gray)
                         .padding(8)
-                        .background()
-                       
                 }
-
-                // Add Button
+                
                 Button(action: {
-                    // Handle add to cart action
+                    mainVM.addToCart(product: Product(name: name, price: price, image: image))
                 }) {
                     Image(systemName: "plus")
                         .font(.title3)
@@ -65,6 +67,7 @@ struct ProductCardView: View {
         .padding(5)
     }
 }
+
 
 struct ProductCardView_Previews: PreviewProvider {
     static var previews: some View {

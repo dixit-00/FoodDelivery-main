@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    @StateObject var mainVM = MainViewModel.shared
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    @StateObject var mainVM = MainViewModel.shared;
 
     var body: some View {
         TabView {
@@ -51,11 +52,11 @@ struct HomeTabView: View {
 
     // Sample Product List
     let products = [
-        Product(name: "Organic Bananas", price: "$4.99", image: "banana"),
+        Product(  name: "Organic Bananas", price: "$4.99", image: "banana"),
         Product(name: "Red Apple", price: "$3.99", image: "apple_red"),
         Product(name: "Ginger", price: "$2.49", image: "ginger"),
         Product(name: "Bell Pepper Red", price: "$2.99", image: "bell_pepper_red"),
-        Product(name: "Pulses", price: "Variety", image: "pulses"),
+        Product(name: "Pulses", price: "$6.", image: "pulses"),
         Product(name: "Beef Bone", price: "$5.99", image: "beef_bone"),
         Product(name: "Broiler Chicken", price: "$6.99", image: "broiler_chicken")
     ]
@@ -129,6 +130,7 @@ struct HomeTabView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .padding(.bottom, 8)
+                        .padding(.leading)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
@@ -148,6 +150,7 @@ struct HomeTabView: View {
                         .fontWeight(.bold)
                         .foregroundColor(Color.orange)
                         .padding(.bottom, 8)
+                        .padding(.leading)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
@@ -167,6 +170,7 @@ struct HomeTabView: View {
                         .fontWeight(.bold)
                         .foregroundColor(Color.blue)
                         .padding(.bottom, 8)
+                        .padding(.leading)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
@@ -192,6 +196,8 @@ struct Product: Identifiable {
     var name: String
     var price: String
     var image: String
+    var quantity: Int = 1
+    
 }
 
 // Product Card View

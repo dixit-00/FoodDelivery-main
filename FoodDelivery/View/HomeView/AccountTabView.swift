@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct AccountTabView: View {
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     @StateObject var mainVM = MainViewModel.shared
     @State private var searchText = ""
     

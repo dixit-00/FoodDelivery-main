@@ -16,6 +16,7 @@ struct VerticalCartBox: View {
                     .frame(width: 50, height: 50)  // Reduced image size to fit within the frame
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .shadow(radius: 5)
+                    .padding(.trailing)
 
                 // Product Name with a more stylish font
                 Text(name)
@@ -72,7 +73,7 @@ struct VerticalCartBox: View {
 
 struct VerticalCartBox_Previews: PreviewProvider {
     static var previews: some View {
-        VerticalCartBox(name: "Organic Bananas", price: "$4.99", image: "placeholder_image", onRemove: {
+        VerticalCartBox(name: "Organic Bananas", price: "$4.99", image: "banana", onRemove: {
             print("Item removed") // Example removal action
         })
         .previewLayout(.sizeThatFits)

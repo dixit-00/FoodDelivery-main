@@ -8,12 +8,30 @@
 import SwiftUI
 
 struct CartTabView: View {
+    @StateObject var mainVM = MainViewModel.shared
+    
     var body: some View {
         VStack {
             Text("Your Cart")
                 .font(.largeTitle)
                 .padding()
-            // Add your Cart content here
+            
+            List(mainVM.cart) { product in
+                HStack {
+                    Image(product.image)
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    
+                    VStack(alignment: .leading) {
+                        Text(product.name)
+                            .font(.headline)
+                        Text(product.price)
+                            .font(.subheadline)
+                    }
+                    Spacer()
+                }
+            }
         }
     }
 }
